@@ -14,7 +14,7 @@ class UserResponse(UserBase):
     is_active: bool
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class Token(BaseModel):
     access_token: str
@@ -43,11 +43,11 @@ class LinkStats(BaseModel):
     expires_at: Optional[datetime] = None
     
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class LinkResponse(LinkBase):
     short_code: str
     short_url: str
 
     class Config:
-        orm_mode = True
+        from_attributes = True

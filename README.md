@@ -29,3 +29,32 @@ BASE_URL=http://localhost:8000
 CREATE ROLE url_app WITH LOGIN PASSWORD 'your-password';
 CREATE DATABASE url_shortener OWNER url_app;
 ```
+
+## Описание API
+```
+POST /links/shorten – создает короткую ссылку (в custom_alias можно передать кастомную ссылку, в expires_at время жизни ссылки)
+GET /links/{short_code} – перенаправляет на оригинальный URL
+DELETE /links/{short_code} – удаляет связь (доступно только после регистрации)
+PUT /links/{short_code} – обновляет URL (доступно только после регистрации)
+GET /links/{short_code}/stats - получение статистики ссылки
+GET /links/search?original_url={url} - Поиск ссылки по оригинальному URL
+```
+
+## Примеры некоторых запросов
+
+### Создание короткой ссылки
+```bash
+curl -X POST "http://localhost:8000/links/shorten" \
+     -H "Content-Type: application/json" \
+     -d '{"original_url":"https://google.com", "custom_alias":"test_url1"}'
+```
+
+### Переход по короткой ссылке
+```bash
+curl -L "http://localhost:8000/test_url1"
+```
+
+### Получение статистики
+```bash
+curl "http://localhost:8000/links/test_url1/stats"
+```
