@@ -56,6 +56,23 @@ def create_short_link(
         short_url=f"{settings.BASE_URL}/{new_link.short_code}"
     )
 
+@router.get("/links/search", response_model=List[LinkResponse])
+def search_links(original_url: str, db: Session = Depends(get_db)):
+    search_term = f"%{original_url.rstrip('/')}%"
+    links = db.query(Link).filter(
+        Link.original_url.ilike(search_term),
+        or_(Link.expires_at.is_(None), Link.expires_at > datetime.utcnow())
+    ).all()
+    
+    return [
+        LinkResponse(
+            original_url=link.original_url, 
+            short_code=link.short_code,
+            short_url=f"{settings.BASE_URL}/{link.short_code}"
+        ) 
+        for link in links
+    ]
+
 @router.get("/links/{short_code}")
 def redirect_to_original(short_code: str, db: Session = Depends(get_db)):
     link = db.query(Link).filter(Link.short_code == short_code).first()
@@ -158,18 +175,3 @@ def delete_link(
     
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
-@router.get("/links/search", response_model=List[LinkResponse])
-def search_links(original_url: str, db: Session = Depends(get_db)):
-    links = db.query(Link).filter(
-        Link.original_url.contains(original_url),
-        or_(Link.expires_at.is_(None), Link.expires_at > datetime.utcnow())
-    ).all()
-    
-    return [
-        LinkResponse(
-            original_url=link.original_url, 
-            short_code=link.short_code,
-            short_url=f"{settings.BASE_URL}/{link.short_code}"
-        ) 
-        for link in links
-    ]
