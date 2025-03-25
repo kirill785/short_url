@@ -37,7 +37,9 @@ GET /links/{short_code} – перенаправляет на оригиналь
 DELETE /links/{short_code} – удаляет связь (доступно только после регистрации)
 PUT /links/{short_code} – обновляет URL (доступно только после регистрации)
 GET /links/{short_code}/stats - получение статистики ссылки
-GET /links/search?original_url={url} - Поиск ссылки по оригинальному URL
+GET /links/search?original_url={url} - поиск ссылки по оригинальному URL
+POST /auth/register - регистрация пользователя
+POST /auth/token - получение токена
 ```
 
 ## Примеры некоторых запросов
